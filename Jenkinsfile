@@ -39,7 +39,7 @@ pipeline {
         }
         stage ('Build') {
             steps {
-                publishDockbuildAndPublishDockerImageerImage("beta")
+                buildAndPublishDockerImage("beta")
             }
         }
         stage ('Make release') {
