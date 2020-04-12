@@ -1,16 +1,21 @@
 #!groovy
 
-@Library('github.com/teecke/jenkins-pipeline-library@v3.4.1') _
+@Library('github.com/tpbtools/jenkins-pipeline-library@v4.0.0') _
 
 // Initialize global config
-cfg = jplConfig('dide-cypress', 'docker', '', [email: env.CITEECKE_NOTIFY_EMAIL_TARGETS])
+cfg = jplConfig('dide-cypress', 'docker', '', [email: env.CI_NOTIFY_EMAIL_TARGETS])
 
-def publishDockerImage(nextReleaseNumber = "") {
+/**
+ * Build and publish docker image
+ *
+ * @param nextReleaseNumber String Release number to be used as tag
+ */
+def buildAndPublishDockerImage(nextReleaseNumber = "") {
     if (nextReleaseNumber == "") {
         nextReleaseNumber = sh (script: "kd get-next-release-number .", returnStdout: true).trim().substring(1)
     }
-    docker.withRegistry("", 'teeckebot-docker-credentials') {
-        def customImage = docker.build("teecke/${cfg.projectName}:${nextReleaseNumber}", "--pull --no-cache .")
+    docker.withRegistry("", 'docker-token') {
+        def customImage = docker.build("${env.DOCKER_ORGANIZATION}/${cfg.projectName}:${nextReleaseNumber}", "--pull --no-cache .")
         customImage.push()
         if (nextReleaseNumber != "beta") {
             customImage.push('latest')
@@ -34,13 +39,13 @@ pipeline {
         }
         stage ('Build') {
             steps {
-                publishDockerImage("beta")
+                publishDockbuildAndPublishDockerImageerImage("beta")
             }
         }
         stage ('Make release') {
             when { branch 'release/new' }
             steps {
-                publishDockerImage()
+                buildAndPublishDockerImage()
                 jplMakeRelease(cfg, true)
             }
         }
@@ -49,6 +54,9 @@ pipeline {
     post {
         always {
             jplPostBuild(cfg)
+        }
+        cleanup {
+            deleteDir()
         }
     }
 
