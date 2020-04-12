@@ -8,18 +8,17 @@ Provide a [Duing](https://github.com/kairops/docker-ubuntu-xrdp-mate-custom/tree
 
 ## Usage
 
-
 Use the Ubuntu Desktop to design your BDD test suite (yes! You have a desktop in a container)
 
 1. Start the `dide-cypress` container.
 
-```console
-$ docker run -dit --name dide-cypress \
-           -p 3389:3389 \
-           --shm-size 1g \
-           --restart unless-stopped \
-           teecke/dide-cypress
-```
+    ```console
+    $ docker run -dit --name dide-cypress \
+            -p 3389:3389 \
+            --shm-size 1g \
+            --restart unless-stopped \
+            tpbtools/dide-cypress
+    ```
 
 2. Access with a remote desktop client to localhost:3389 using `ubuntu` user and `ubuntu` password.
 
