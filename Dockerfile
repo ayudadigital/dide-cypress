@@ -1,4 +1,4 @@
-FROM kairops/duing:19.04
+FROM ayudadigital/duing:18.04
 
 # Install xvfb package to support $(npm bin)/cypress open
 RUN apt-get update -y && \ 
